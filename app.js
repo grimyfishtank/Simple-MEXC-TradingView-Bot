@@ -1,8 +1,8 @@
 const express = require('express');
-const { createExchange } = require('@compendiumfi/pendax');
+const { createExchange } = require('@compendiumfi/pendax/exchanges/exchange.js'); 
 require('dotenv').config();
 
-// This Code Needs Further Review And Testing. Please Use With Caution
+// This Code May Need Further Review And Testing. Please Use With Caution
 
 const app = express();
 app.use(express.json());
@@ -13,7 +13,7 @@ const mexcClient = createExchange({
     authenticate: true,
     key: process.env.MEXC_API_KEY,
     secret: process.env.MEXC_API_SECRET
-    // Add other necessary authentication details
+    // Add other necessary authentication details if changing exchange, etc.
 });
 
 app.post('/webhook', async (req, res) => {
@@ -50,6 +50,7 @@ async function processTradeSignal(signal, symbol, quantity) {
 
         return `Order placed: ${signal.toUpperCase()} ${tradeSize} in market ${symbol.replace('-', '')}`;
     } catch (error) {
+        console.error(`Error in processTradeSignal: ${error.message}`);
         throw error;
     }
 }
@@ -80,3 +81,4 @@ function calculateTradeSize(accountInfo, symbol, side, quantityPct) {
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+
